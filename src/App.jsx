@@ -25,20 +25,30 @@ function App() {
   const validate = async (data) => {
     getUsers().then((response) => {
       const found = response.find(element => {
-        return element.email === data.email
+        return element.email === data.email;
       });
       if (found) {
         if (found.password === data.password) {
-          alert(`Seja bem-vindo (a) ${found.username}`)
+          alert(`Seja bem-vindo (a) ${found.username}`);
           delete found.password;
-          localStorage.setItem("user", JSON.stringify(found))
+          const token = generateToken();
+          localStorage.setItem("user", JSON.stringify(found));
+          localStorage.setItem("token", JSON.stringify(token));
         } else {
-          alert("Senha incorreta!")
+          alert("Senha incorreta!");
         }
       } else {
-        alert("Usuáio não cadastrado !")
+        alert("Usuáio não cadastrado !");
       }
     })
+  }
+
+  const generateToken = () => {
+    let result = '';
+    for (var i = 80; i > 0; --i) {
+      result += (Math.floor(Math.random()*256)).toString(16);
+    }
+    return result;
   }
 
   const getUsers = async () => {
@@ -46,7 +56,7 @@ function App() {
       const response = await fetch("http://localhost:3000/users", {
         method: "GET"
       })
-      return response.json()
+      return response.json();
     } catch (err) {
       throw new Error(err);
     }
